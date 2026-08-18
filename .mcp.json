@@ -3,8 +3,6 @@
     "agent-intercom": {
       "command": "claude-intercom-mcp",
       "env": {
-        "AGENT_INTERCOM_SESSION_ID": "grok-worker",
-        "AGENT_INTERCOM_SESSION_NAME": "grok-worker",
         "CLAUDE_INTERCOM_MODEL": "grok-build"
       }
     }

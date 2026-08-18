@@ -27,9 +27,14 @@ Start a new Grok session, then call `intercom_whoami` and `intercom_list`.
 
 ## Identity and delivery
 
-The plugin's supplied ID, `grok-worker`, is static. Change its
-`AGENT_INTERCOM_SESSION_ID` and `AGENT_INTERCOM_SESSION_NAME` before running a
-second live Grok worker; concurrent sessions may not share an Intercom ID.
+The plugin deliberately supplies only `CLAUDE_INTERCOM_MODEL=grok-build`; it
+does not set an Intercom ID or name, so it cannot make concurrent panes
+collide. Grok starts MCP children with the `env` configured for that MCP
+server; do not assume that arbitrary pane environment variables are forwarded.
+A multi-pane supervisor must provision a per-worker MCP configuration with
+literal, unique `CLAUDE_INTERCOM_SESSION_ID` and `CLAUDE_INTERCOM_NAME` values.
+`AGENT_INTERCOM_SESSION_ID` and `AGENT_INTERCOM_SESSION_NAME` are supported
+host-neutral fallbacks. Concurrent sessions may not share an Intercom ID.
 
 This is an MCP integration, not a Grok wake bridge. An inbound
 `intercom_send` is retained until Grok calls `intercom_pending`; it does not
