@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "agent-intercom": {
-      "command": "claude-intercom-mcp",
+      "command": "agent-intercom-grok-mcp",
       "env": {
         "CLAUDE_INTERCOM_MODEL": "grok-build"
       }

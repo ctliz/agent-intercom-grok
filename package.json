@@ -1,0 +1,45 @@
+{
+  "name": "@ctliz/agent-intercom-grok",
+  "version": "0.1.0",
+  "description": "Grok Build plugin that exposes Agent Intercom through a packaged MCP launcher.",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "bin": {
+    "agent-intercom-grok-mcp": "bin/agent-intercom-grok-mcp.mjs"
+  },
+  "files": [
+    ".grok-plugin/**/*",
+    ".mcp.json",
+    "bin/**/*",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@ctliz/agent-intercom-claude": "0.13.0-connect.7"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "keywords": [
+    "grok",
+    "grok-build",
+    "mcp",
+    "agent-intercom",
+    "multi-agent"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ctliz/agent-intercom-grok.git"
+  },
+  "homepage": "https://github.com/ctliz/agent-intercom-grok#readme",
+  "bugs": {
+    "url": "https://github.com/ctliz/agent-intercom-grok/issues"
+  }
+}
