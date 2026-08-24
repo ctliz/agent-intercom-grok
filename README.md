@@ -14,7 +14,7 @@ command -v agent-intercom-grok-mcp
 Install the Grok plugin from its exact release tag:
 
 ```bash
-grok plugin install ctliz/agent-intercom-grok@v0.1.0 --trust
+grok plugin install ctliz/agent-intercom-grok@v0.1.1 --trust
 ```
 
 Start a new Grok session, then call `intercom_whoami` and `intercom_list`.
