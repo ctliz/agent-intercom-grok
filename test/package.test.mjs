@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
@@ -12,13 +14,19 @@ test("package and Grok plugin metadata stay aligned", () => {
   assert.equal(manifest.name, "@ctliz/agent-intercom-grok");
   assert.equal(plugin.version, manifest.version);
   assert.equal(mcp.mcpServers["agent-intercom"].command, "agent-intercom-grok-mcp");
-  assert.equal(manifest.dependencies["@ctliz/agent-intercom-claude"], "0.13.0-connect.7");
+  assert.equal(manifest.dependencies["@ctliz/agent-intercom-claude"], "0.14.1");
+  assert.deepEqual(mcp.mcpServers["agent-intercom"].env, { CLAUDE_INTERCOM_MODEL: "grok-build" });
 });
 
-test("packaged launcher exposes all annotated Intercom tools", async () => {
+test("packaged launcher exposes all annotated Intercom tools", async t => {
+  const agentDir = await mkdtemp(join(tmpdir(), "grok-mcp-tools-"));
+  t.after(() => rm(agentDir, { recursive: true, force: true }));
+  await mkdir(join(agentDir, "intercom"));
+  await writeFile(join(agentDir, "intercom/config.json"), JSON.stringify({ enabled: false }));
   const child = spawn(process.execPath, [fileURLToPath(new URL("../bin/agent-intercom-grok-mcp.mjs", import.meta.url))], {
     stdio: ["pipe", "pipe", "pipe"],
     shell: false,
+    env: { ...process.env, PI_CODING_AGENT_DIR: agentDir, GROK_SESSION_ID: "", AGENT_INTERCOM_SCOPE_ID: "" },
   });
   child.stdin.end('{"jsonrpc":"2.0","id":1,"method":"tools/list"}\n');
   const output = await new Promise((resolve, reject) => {
@@ -37,7 +45,8 @@ test("packaged launcher exposes all annotated Intercom tools", async () => {
     });
   });
   const tools = JSON.parse(String(output).trim()).result.tools;
-  assert.equal(tools.length, 9);
+  assert.equal(tools.length, 10);
+  assert.ok(tools.some(tool => tool.name === "intercom_join"));
   for (const tool of tools) {
     for (const hint of ["readOnlyHint", "destructiveHint", "idempotentHint", "openWorldHint"]) {
       assert.equal(typeof tool.annotations[hint], "boolean");
