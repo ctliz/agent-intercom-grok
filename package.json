@@ -1,6 +1,6 @@
 {
   "name": "@ctliz/agent-intercom-grok",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Grok Build plugin that exposes Agent Intercom through a packaged MCP launcher.",
   "license": "AGPL-3.0-or-later",
   "type": "module",
@@ -19,7 +19,7 @@
     "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
-    "@ctliz/agent-intercom-claude": "0.14.1"
+    "@ctliz/agent-intercom-claude": "0.15.0"
   },
   "publishConfig": {
     "access": "public"

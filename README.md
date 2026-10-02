@@ -14,7 +14,7 @@ command -v agent-intercom-grok-mcp
 Install the Grok plugin from its exact release tag:
 
 ```bash
-grok plugin install ctliz/agent-intercom-grok@v0.1.2 --trust
+grok plugin install ctliz/agent-intercom-grok@v0.2.0 --trust
 ```
 
 Start a new Grok session. The persistent MCP server registers immediately, without a prompt or tool call. Use `intercom_whoami` and `intercom_list` to verify it.
@@ -39,6 +39,10 @@ AGENT_INTERCOM_SESSION_NAME=<display-name>
 ```
 
 `CLAUDE_INTERCOM_SESSION_ID` remains a higher-priority compatibility alias; configured names are initial fallbacks until a native title is available. A rename changes presence, not the stable Intercom ID. Concurrent sessions may not share an Intercom ID. Use the same `AGENT_INTERCOM_SCOPE_ID` as intended peers, or leave it unset for the default local scope.
+
+## Task teams
+
+The shared Claude MCP runtime supports additive task teams. When delegating to named peers, ask once for user approval, discover peers, then use `intercom_join({ name: "launch", create: true, members: ["front", "writer"], work: "Current task" })`. Explicit create/join requests are already approval; reuse an approved team for the same task. Joining preserves previous memberships and roles. Include `team` on task sends/asks, especially with multiple shared teams. Initial contact without a shared team remains ungrouped by omitting `team`. Replies use `askId`/`contextId` from `intercom_pending` and inherit the original team; never replace it with a mutable current team.
 
 ## Delivery behavior
 
