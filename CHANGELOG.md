@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 - 2026-10-04
+
+- Upgrade the shared Claude MCP runtime to 0.15.1 so shortest-path instructions are available even without loading the skill.
+- Bundle a Grok-specific shortest-path Intercom skill: send directly to known peers, discover and diagnose only when needed, and keep all message/reply operations on this plugin's MCP server instead of switching to imported services. Preserve team approval and natural-boundary polling.
+
 ## 0.1.2 - 2026-09-30
 
 - Upgrade the shared Claude MCP runtime to 0.14.1 for eager registration and named teams.

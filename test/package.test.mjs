@@ -14,8 +14,23 @@ test("package and Grok plugin metadata stay aligned", () => {
   assert.equal(manifest.name, "@ctliz/agent-intercom-grok");
   assert.equal(plugin.version, manifest.version);
   assert.equal(mcp.mcpServers["agent-intercom"].command, "agent-intercom-grok-mcp");
-  assert.equal(manifest.dependencies["@ctliz/agent-intercom-claude"], "0.15.0");
+  assert.equal(manifest.dependencies["@ctliz/agent-intercom-claude"], "0.15.1");
   assert.deepEqual(mcp.mcpServers["agent-intercom"].env, { CLAUDE_INTERCOM_MODEL: "grok-build" });
+});
+
+test("package ships a Grok-specific shortest-path skill", async () => {
+  assert.ok(manifest.files.includes("skills/**/*"));
+  const skill = await readFile(new URL("../skills/grok-intercom/SKILL.md", import.meta.url), "utf8");
+  assert.match(skill, /name: grok-intercom/);
+  assert.match(skill, /Use this plugin's `agent-intercom` MCP server/);
+  assert.match(skill, /For a known recipient, call `intercom_send` directly/);
+  assert.match(skill, /as routine preflight checks/);
+  assert.match(skill, /natural work boundaries when expecting a response or handling inbound messages/);
+  assert.match(skill, /ask once for approval before creating a team or adding peers/);
+  assert.match(skill, /Inherit the original message's team/);
+  const example = JSON.parse(skill.match(/```json\n([^`]+)\n```/)[1]);
+  assert.deepEqual(Object.keys(example).sort(), ["message", "to"]);
+  assert.ok(example.to && example.message);
 });
 
 test("packaged launcher exposes all annotated Intercom tools", async t => {
@@ -46,7 +61,11 @@ test("packaged launcher exposes all annotated Intercom tools", async t => {
   });
   const responses = String(output).trim().split("\n").map(line => JSON.parse(line));
   const tools = responses.find(response => response.id === 1).result.tools;
-  assert.match(responses.find(response => response.id === 2).result.instructions, /Wait for approval/);
+  const instructions = responses.find(response => response.id === 2).result.instructions;
+  assert.match(instructions, /Wait for approval/);
+  assert.match(instructions, /For a known recipient, call intercom_send directly/);
+  assert.match(instructions, /as routine preflight checks/);
+  assert.match(instructions, /natural work boundaries when expecting a response or handling inbound messages/);
   const properties = name => tools.find(tool => tool.name === name).inputSchema.properties;
   assert.ok(properties("intercom_join").members);
   assert.ok(properties("intercom_join").work);

@@ -14,7 +14,7 @@ command -v agent-intercom-grok-mcp
 Install the Grok plugin from its exact release tag:
 
 ```bash
-grok plugin install ctliz/agent-intercom-grok@v0.2.0 --trust
+grok plugin install ctliz/agent-intercom-grok@v0.2.1 --trust
 ```
 
 Start a new Grok session. The persistent MCP server registers immediately, without a prompt or tool call. Use `intercom_whoami` and `intercom_list` to verify it.
@@ -39,6 +39,12 @@ AGENT_INTERCOM_SESSION_NAME=<display-name>
 ```
 
 `CLAUDE_INTERCOM_SESSION_ID` remains a higher-priority compatibility alias; configured names are initial fallbacks until a native title is available. A rename changes presence, not the stable Intercom ID. Concurrent sessions may not share an Intercom ID. Use the same `AGENT_INTERCOM_SCOPE_ID` as intended peers, or leave it unset for the default local scope.
+
+## Shortest calling path
+
+The plugin bundles the `grok-intercom` skill. Use its `agent-intercom` MCP server consistently rather than switching to an imported Cursor or Claude Intercom server. For a known recipient, send directly; discover peers only for unknown, missing, or ambiguous targets, and check status only for connection errors. If the host requires tool discovery, discover only the selected tool and reuse its definition while it remains in context.
+
+A standalone successful send does not need extra verification or a pending check. Poll `intercom_pending` at natural work boundaries when expecting replies or handling inbound messages; team approval and reply threading remain unchanged. Reinstall or update the Grok plugin and start a new session to load the skill; updating only the global npm launcher does not update installed plugin skills.
 
 ## Task teams
 
