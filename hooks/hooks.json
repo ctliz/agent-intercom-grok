@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${GROK_PLUGIN_ROOT}/bin/agent-intercom-grok-wake.mjs\" hook", "timeout": 5 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${GROK_PLUGIN_ROOT}/bin/agent-intercom-grok-wake.mjs\" hook", "timeout": 5 }
+        ]
+      }
+    ]
+  }
+}

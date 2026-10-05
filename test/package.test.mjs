@@ -14,6 +14,8 @@ test("package and Grok plugin metadata stay aligned", () => {
   assert.equal(manifest.name, "@ctliz/agent-intercom-grok");
   assert.equal(plugin.version, manifest.version);
   assert.equal(mcp.mcpServers["agent-intercom"].command, "agent-intercom-grok-mcp");
+  assert.equal(manifest.bin["agent-intercom-grok-wake"], "bin/agent-intercom-grok-wake.mjs");
+  assert.ok(manifest.files.includes("hooks/**/*"));
   assert.equal(manifest.dependencies["@ctliz/agent-intercom-claude"], "0.15.1");
   assert.deepEqual(mcp.mcpServers["agent-intercom"].env, { CLAUDE_INTERCOM_MODEL: "grok-build" });
 });
@@ -33,6 +35,23 @@ test("package ships a Grok-specific shortest-path skill", async () => {
   assert.ok(example.to && example.message);
 });
 
+test("plugin ships native receive hooks and a same-session, read-once skill", async () => {
+  const hooks = JSON.parse(await readFile(new URL("../hooks/hooks.json", import.meta.url), "utf8"));
+  assert.deepEqual(Object.keys(hooks.hooks).sort(), ["PostToolUse", "Stop"]);
+  for (const groups of Object.values(hooks.hooks)) {
+    assert.match(groups[0].hooks[0].command, /GROK_PLUGIN_ROOT.*agent-intercom-grok-wake\.mjs/);
+    assert.equal(groups[0].hooks[0].timeout, 5);
+  }
+  const skill = await readFile(new URL("../skills/grok-intercom/SKILL.md", import.meta.url), "utf8");
+  assert.match(skill, /persistent: true/);
+  assert.match(skill, /intercom_pending\(\{mark_read:true\}\)/);
+  assert.match(skill, /untouched idle session/);
+  assert.match(skill, /denied, disabled, or unsupported/);
+  assert.match(skill, /AGENT_INTERCOM_GROK_LEADER_SOCKET/);
+  const launcher = await readFile(new URL("../bin/agent-intercom-grok-mcp.mjs", import.meta.url), "utf8");
+  assert.match(launcher, /runGrokLeaderWake\(runtime, process\.env, wake\.signal\)/);
+});
+
 test("packaged launcher exposes all annotated Intercom tools", async t => {
   const agentDir = await mkdtemp(join(tmpdir(), "grok-mcp-tools-"));
   t.after(() => rm(agentDir, { recursive: true, force: true }));
@@ -41,7 +60,7 @@ test("packaged launcher exposes all annotated Intercom tools", async t => {
   const child = spawn(process.execPath, [fileURLToPath(new URL("../bin/agent-intercom-grok-mcp.mjs", import.meta.url))], {
     stdio: ["pipe", "pipe", "pipe"],
     shell: false,
-    env: { ...process.env, PI_CODING_AGENT_DIR: agentDir, GROK_SESSION_ID: "", AGENT_INTERCOM_SCOPE_ID: "" },
+    env: { ...process.env, PI_CODING_AGENT_DIR: agentDir, GROK_SESSION_ID: "", AGENT_INTERCOM_SCOPE_ID: "", AGENT_INTERCOM_GROK_LEADER_SOCKET: "" },
   });
   child.stdin.end('{"jsonrpc":"2.0","id":1,"method":"tools/list"}\n{"jsonrpc":"2.0","id":2,"method":"initialize"}\n');
   const output = await new Promise((resolve, reject) => {

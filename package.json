@@ -1,16 +1,18 @@
 {
   "name": "@ctliz/agent-intercom-grok",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Grok Build plugin that exposes Agent Intercom through a packaged MCP launcher.",
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "bin": {
-    "agent-intercom-grok-mcp": "bin/agent-intercom-grok-mcp.mjs"
+    "agent-intercom-grok-mcp": "bin/agent-intercom-grok-mcp.mjs",
+    "agent-intercom-grok-wake": "bin/agent-intercom-grok-wake.mjs"
   },
   "files": [
     ".grok-plugin/**/*",
     ".mcp.json",
     "skills/**/*",
+    "hooks/**/*",
     "bin/**/*",
     "README.md",
     "CHANGELOG.md",

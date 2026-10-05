@@ -1,7 +1,7 @@
 {
   "name": "agent-intercom-grok",
-  "version": "0.2.1",
-  "description": "Grok Build plugin that exposes Agent Intercom through agent-intercom-grok-mcp.",
+  "version": "0.3.0",
+  "description": "Agent Intercom MCP tools with default native inbox monitoring for Grok Build.",
   "license": "AGPL-3.0-or-later",
   "keywords": ["grok", "mcp", "intercom", "multi-agent"]
 }

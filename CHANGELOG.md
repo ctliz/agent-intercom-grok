@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 - 2026-10-06
+
+- Add default PostToolUse/Stop receive setup through Grok's native persistent `monitor` tool, without bypassing permission prompts or creating a second Intercom identity.
+- Publish the actual MCP owner's inbox descriptor for its exact native session, retaining explicit identity/inbox overrides. Bundle a read-only helper with duplicate-listener protection, burst notifications, partial-append handling and reconnect recovery.
+- Drain current unread messages on monitor-ready notifications and fetch full messages/attachments with `intercom_pending({mark_read:true})`; preserve original team and contextId/askId, and never replay historical mirror text as a task.
+- Recover empty, partial and stale locks using atomically published directory claims and inode-specific retired generations; verify listener ownership before notifying. Suppress repeated setup within a native prompt ID, including the Stop fallback after a failed/unsupported attempt.
+- Document the first-model-turn bootstrap requirement, session-lifetime persistence, polling fallback and delivery-vs-model-awareness distinction.
+- Add opt-in leader receive mode via `AGENT_INTERCOM_GROK_LEADER_SOCKET`: the original MCP owner injects only a fixed automated notice with `_x.ai/interject`, without a user bootstrap prompt, duplicate monitor, second broker identity or permission approval. Retry known pre-admission failures, but never automatically replay ambiguous post-send failures.
+
 ## 0.2.1 - 2026-10-04
 
 - Upgrade the shared Claude MCP runtime to 0.15.1 so shortest-path instructions are available even without loading the skill.
